@@ -141,7 +141,7 @@ const LogIn = ({ account, setAccount }) => {
         >
           <button
             className="  text-2xl font-bold flex items-center mt-2p-2"
-            onClick={getDBAccount}
+            onClick={getWAccount}
           >
             {buttonText}
           </button>

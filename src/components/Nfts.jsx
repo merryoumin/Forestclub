@@ -8,6 +8,14 @@ import "slick-carousel/slick/slick-theme.css";
 const Nfts = ({ page, mintedNft }) => {
   const [selectedPage, setSelectedPage] = useState(1);
   const [nfts, setNfts] = useState();
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3, // 한 번에 보여지는 슬라이드 개수
+    slidesToScroll: 1, // 한 번 스크롤 시 이동할 슬라이드 개수
+    initialSlide: 0,
+  };
 
   const getNfts = async (p) => {
     //페이지 번호 받아줌
@@ -68,54 +76,24 @@ const Nfts = ({ page, mintedNft }) => {
   return (
     <div className="max-w-screen-xl mx-auto pt-4">
       <div>{pageComp()}</div>
-
-      <ul className="mt-8 grid grid-cols-1 xl:grid-cols-2 justify-items-center gap-8">
-        {nfts ? (
-          nfts.map((v, i) => {
-            // console.log(i + "v : " + v);
-            return (
-              <Slider
-                dots={true}
-                infinite={true}
-                speed={500}
-                slidesToShow={3}
-                slidesToScroll={1}
-              >
-                {nfts ? (
-                  nfts.map((v, i) => {
-                    return (
-                      <NftCard
-                        key={i}
-                        tokenId={v.tokenId}
-                        metadata={v.metadata}
-                        mintedNft={mintedNft}
-                      />
-                    );
-                  })
-                ) : (
-                  <div>로딩중입니다...</div>
-                )}
-              </Slider>
-            );
-          })
-        ) : (
-          <div>로딩중입니다...</div>
-        )}
-      </ul>
-      {nfts ? (
-        nfts.map((v, i) => {
-          return (
-            <NftCard
-              key={i}
-              tokenId={v.tokenId}
-              metadata={v.metadata}
-              mintedNft={mintedNft}
-            />
-          );
-        })
-      ) : (
-        <div>로딩중입니다...</div>
-      )}
+      <div className="mainSkill w-full pb-16 relative overflow-hidden">
+        <Slider {...sliderSettings}>
+          {nfts ? (
+            nfts.map((v, i) => {
+              return (
+                <NftCard
+                  key={i}
+                  tokenId={v.tokenId}
+                  metadata={v.metadata}
+                  mintedNft={mintedNft}
+                />
+              );
+            })
+          ) : (
+            <div>로딩중입니다...</div>
+          )}
+        </Slider>
+      </div>
     </div>
   );
 };

@@ -6,18 +6,42 @@ import Nfts from "../components/Nfts";
 const web3 = new Web3(window.ethereum);
 const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
 
-function Main() {
+function Main({ account }) {
+  const [totalNft, setTotalNft] = useState(0);
   const [mintedNft, setMintedNft] = useState(0);
+  const [myNft, setMyNft] = useState(0);
   const [page, setPage] = useState(1);
 
-  const checkLogin = async (req) => {
-    const { account } = req.params;
-    if (!account) return alert("Login plz");
+  const getTotalNft = async () => {
+    try {
+      if (!contract) return;
+      const response = await contract.methods.totalNft().call();
+
+      setTotalNft(response);
+      // console.log("totalNft" + response);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  useEffect(() => {
-    checkLogin();
-  }, []);
+  const getMyNft = async () => {
+    console.log("contract" + contract);
+    console.log("account" + account);
+    try {
+      // if (!contract || !account) return; //balanceOf는 account도 필요함
+
+      const response = await contract.methods.balanceOf(account).call();
+      console.log("getMyNft" + response);
+      setMyNft(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // const checkLogin = async (req) => {
+  //   const { account } = req.params;
+  //   if (!account) return alert("Login plz");
+  // };
 
   const getMintedNft = async () => {
     try {
@@ -25,11 +49,17 @@ function Main() {
       const response = await contract.methods.totalSupply().call(); //NFT 민팅된 총개수
 
       setMintedNft(response);
+      console.log("setMintedNft" + response);
       setPage(parseInt((parseInt(response) - 1) / 10) + 1);
     } catch (error) {
       console.error(error);
     }
   };
+  useEffect(() => {
+    getTotalNft();
+    getMyNft();
+    getMintedNft();
+  }, []);
 
   return (
     <div className=" flex  flex-col  justify-center items-center h-screen ">
@@ -57,6 +87,20 @@ function Main() {
           위해 동물들 별로 클럽을 만들어 체계적으로 관리하기로 한다. 그리고
           구성원들이 서로를 비밀리에 알아보기 위해 인증된 표식을 나누어가지고
           보물을 찾아 뿔뿔이 흩어졌다.
+        </div>
+        <div className="py-4 text-center flex ">
+          <div>
+            <div className="font-bold text-green-900">{totalNft}</div>
+            <div className="text-gray-900">총 NFT</div>
+          </div>
+          <div className="ml-10">
+            <div className="font-bold text-green-900">{mintedNft}</div>
+            <div className="text-gray-900">발행된 NFT</div>
+          </div>
+          <div className="ml-10">
+            <div className="font-bold text-green-900">{myNft}</div>
+            <div className="text-gray-900">내 NFT</div>
+          </div>
         </div>
         <div>
           <Nfts page={page} mintedNft={mintedNft} />

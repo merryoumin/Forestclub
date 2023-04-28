@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Detail from "./pages/detail";
 import Mypage from "./pages/mypage";
@@ -10,6 +10,20 @@ import Header from "./components/Header";
 function App() {
   const [account, setAccount] = useState("");
   const [start, setStart] = useState(0);
+  const onClickAccount = async () => {
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      setAccount(accounts[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    onClickAccount();
+  }, []);
   return (
     <BrowserRouter>
       <div className="h-full flex  flex-col items-center justify-start">
@@ -23,9 +37,9 @@ function App() {
         <div className=" absolute justify-center items-center">
           <Header account={account} setAccount={setAccount} />
           <Routes>
-            <Route path="/main/:account" element={<Main account={account} />} />
+            <Route path="/" element={<Main account={account} />} />
             <Route
-              path="/"
+              path="/join"
               element={
                 <JoinIn
                   account={account}
